@@ -12,25 +12,35 @@
       // 부모에 props를 사용하면 자식 컴포넌트(함수)의 인자로 객체가 들어가게 됨
       // 하나의 버튼을 만들어서 props를 이용해 버튼의 스타일을 관리해서 재사용할 수 있게 됨
 
-    function Btn({banana, big}) {
-        console.log(banana, big);
-        return <button style={{
+    function Btn({text, changeValue}) {
+        console.log(text, "was rendered");
+        return <button 
+        onClick={changeValue}
+        style={{
             backgroundColor: "tomato",
             color: "white",
             padding: "10px",
             border: 0,
             borderRadius:10,
-            fontSize: big ? 18 : 14,
+            fontSize: 14,
         }}>
-            {banana}
+            {text}
         </button>;
     }
 
+    /* React memo */
+    // 컴포넌트가 동일한 props로 동일한 결과를 렌더링해낸다면, React.memo를 호출하고 결과를 메모이징 하도록 래핑하여
+    // 경우에 따라 성능 향상을 누릴 수 있음
+    // 즉, React는 컴포넌트를 렌더링하지 않고 마지막으로 렌더링된 결과를 재사용
+    const MemorizedBtn = React.memo(Btn);
+
     function App() {
+        const [value, setValue] = React.useState("Save Changes");
+        const changeValue = () => setValue("Revert Changes");
         return (        
             <div>
-                <Btn banana="Save Changes" big={true}/>
-                <Btn banana="Continue" big={false}/>
+                <MemorizedBtn text={value} changeValue={changeValue}/>
+                <MemorizedBtn text="Continue" />
             </div>
         );
     }
