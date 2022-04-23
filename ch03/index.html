@@ -6,13 +6,15 @@
   <script src="https://unpkg.com/react@17/umd/react.development.js"crossorigin></script>
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/prop-types@15.7.2/prop-types.js"></script>
   <script type="text/babel">
 
       // props = 부모 컴포넌트로부터 자식 컴포넌트에게 데이터를 전송하는 방식
       // 부모에 props를 사용하면 자식 컴포넌트(함수)의 인자로 객체가 들어가게 됨
       // 하나의 버튼을 만들어서 props를 이용해 버튼의 스타일을 관리해서 재사용할 수 있게 됨
 
-    function Btn({text, changeValue}) {
+      //fontSize default 값 설정 (리액트가 아닌 js에 의한 것)
+    function Btn({text, changeValue, fontSize=12}) {
         console.log(text, "was rendered");
         return <button 
         onClick={changeValue}
@@ -22,7 +24,7 @@
             padding: "10px",
             border: 0,
             borderRadius:10,
-            fontSize: 14,
+            fontSize,
         }}>
             {text}
         </button>;
@@ -32,15 +34,24 @@
     // 컴포넌트가 동일한 props로 동일한 결과를 렌더링해낸다면, React.memo를 호출하고 결과를 메모이징 하도록 래핑하여
     // 경우에 따라 성능 향상을 누릴 수 있음
     // 즉, React는 컴포넌트를 렌더링하지 않고 마지막으로 렌더링된 결과를 재사용
-    const MemorizedBtn = React.memo(Btn);
+    //const MemorizedBtn = React.memo(Btn);
+
+    //* PropType */
+    //PropType를 이용해 보내지는 prop의 type을 정의할 수 있음
+    //잘못된 type의 prop이 보내지는 것을 방지하기 위함 -> 에러메세지를 통해 알려주기 때문
+    //isRequired로 필수 입력
+    Btn.propTypes = {
+        text: PropTypes.string.isRequired,
+        fontSize: PropTypes.number,
+    }; 
 
     function App() {
         const [value, setValue] = React.useState("Save Changes");
         const changeValue = () => setValue("Revert Changes");
         return (        
             <div>
-                <MemorizedBtn text={value} changeValue={changeValue}/>
-                <MemorizedBtn text="Continue" />
+                <Btn text={value} changeValue={changeValue} fontSize={18}/>
+                <Btn text="Continue" />
             </div>
         );
     }
